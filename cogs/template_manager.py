@@ -3,76 +3,8 @@ from discord.ext import commands
 from discord import app_commands
 import json
 import asyncio
-from typing import List, Dict, Optional
-
-# Template padrão
-DEFAULT_TEMPLATE = {
-    "roles": [
-        "Administrador",
-        "Gerente de Projeto",
-        "Desenvolvedor",
-        "QA",
-        "Documentação"
-    ],
-    "categories": {
-        "📢 GERAL": [
-            "boas-vindas",
-            "anúncios",
-            "regras",
-            "recursos"
-        ],
-        "📆 REUNIÕES E DAILY": [
-            "agendamento-reunioes",
-            "daily-reports",
-            "atas-reunioes-quarta",
-            "atas-reunioes-domingo"
-        ],
-        "🎯 GESTÃO DO PROJETO": [
-            "cronograma",
-            "status-geral",
-            "dúvidas-gerais",
-            "sugestões-melhorias"
-        ],
-        "💻 DESENVOLVIMENTO": {
-            "Módulo de Extração": [
-                "extração-dados-discussão",
-                "apis-fontes-dados",
-                "implementação-extração"
-            ],
-            "Módulo de IA": [
-                "ia-modelo-discussão",
-                "treinamento-modelo",
-                "validação-respostas"
-            ],
-            "Módulo WhatsApp": [
-                "whatsapp-api-setup",
-                "implementação-mensagens",
-                "logs-monitoramento"
-            ]
-        },
-        "🧪 TESTES E QUALIDADE": [
-            "testes-unitarios",
-            "testes-integração",
-            "bugs-reports",
-            "validação-qualidade"
-        ],
-        "📚 DOCUMENTAÇÃO": [
-            "documentação-técnica",
-            "guias-processos",
-            "manuais-configuração"
-        ],
-        "🤝 EQUIPE": [
-            "chat-geral-equipe",
-            "off-topic"
-        ]
-    },
-    "voice_channels": [
-        "Reunião Semanal",
-        "Daily Sync",
-        "Discussões Técnicas",
-        "Sala de Pair Programming"
-    ]
-}
+from typing import List
+from utils import BotUtils, Status
 
 class TemplateManager(commands.Cog):
     def __init__(self, bot):
@@ -84,9 +16,9 @@ class TemplateManager(commands.Cog):
             existing_role = discord.utils.get(guild.roles, name=role_name)
             if not existing_role:
                 await guild.create_role(name=role_name)
-                log_messages.append(f"✅ Cargo criado: {role_name}")
+                log_messages.append(f"{Status.SUCCESS.value} Cargo criado: {role_name}")
             else:
-                log_messages.append(f"ℹ️ Cargo já existe: {role_name}")
+                log_messages.append(f"{Status.WARNING.value} Cargo já existe: {role_name}")
         return log_messages
 
     async def create_category_with_channels(self, guild: discord.Guild, category_name: str,
@@ -106,9 +38,9 @@ class TemplateManager(commands.Cog):
                 existing_channel = discord.utils.get(category.channels, name=channel_name)
                 if not existing_channel:
                     await guild.create_text_channel(channel_name, category=category)
-                    log_messages.append(f"✅ Canal criado: {channel_name}")
+                    log_messages.append(f"{Status.SUCCESS.value} Canal criado: {channel_name}")
                 else:
-                    log_messages.append(f"ℹ️ Canal já existe: {channel_name}")
+                    log_messages.append(f"{Status.WARNING.value} Canal já existe: {channel_name}")
 
         elif isinstance(channels_data, dict):
             for subcategory_name, subchannel_data in channels_data.items():
@@ -125,18 +57,18 @@ class TemplateManager(commands.Cog):
         existing_category = discord.utils.get(guild.categories, name=voice_category_name)
         if existing_category:
             voice_category = existing_category
-            log_messages.append(f"ℹ️ Categoria de voz já existe: {voice_category_name}")
+            log_messages.append(f"{Status.WARNING.value} Categoria de voz já existe: {voice_category_name}")
         else:
             voice_category = await guild.create_category(voice_category_name)
-            log_messages.append(f"✅ Categoria de voz criada: {voice_category_name}")
+            log_messages.append(f"{Status.SUCCESS.value} Categoria de voz criada: {voice_category_name}")
 
         for vc_name in voice_channels:
             existing_vc = discord.utils.get(voice_category.channels, name=vc_name)
             if not existing_vc:
                 await guild.create_voice_channel(vc_name, category=voice_category)
-                log_messages.append(f"✅ Canal de voz criado: {vc_name}")
+                log_messages.append(f"{Status.SUCCESS.value} Canal de voz criado: {vc_name}")
             else:
-                log_messages.append(f"ℹ️ Canal de voz já existe: {vc_name}")
+                log_messages.append(f"{Status.WARNING.value} Canal de voz já existe: {vc_name}")
 
         return log_messages
 
@@ -149,7 +81,7 @@ class TemplateManager(commands.Cog):
                 template_content = await template_file.read()
                 template_data = json.loads(template_content.decode('utf-8'))
             else:
-                template_data = DEFAULT_TEMPLATE
+                template_data = BotUtils.get_default_template()
 
             log_messages = []
             guild = interaction.guild
@@ -186,10 +118,10 @@ class TemplateManager(commands.Cog):
             await interaction.followup.send("🚀 Iniciando configuração do servidor...")
             for chunk in chunks:
                 await interaction.followup.send(chunk)
-            await interaction.followup.send("✅ Configuração concluída!")
+            await interaction.followup.send(f"{Status.SUCCESS.value} Configuração concluída!")
 
         except Exception as e:
-            await interaction.followup.send(f"❌ Erro durante a configuração: {str(e)}")
+            await interaction.followup.send(f"{Status.ERROR.value} Erro durante a configuração: {str(e)}")
 
     @app_commands.command(name="template-format", description="Mostra o formato do arquivo JSON para criar template")
     async def template_format(self, interaction: discord.Interaction):
