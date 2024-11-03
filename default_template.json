@@ -1,0 +1,50 @@
+{
+    "roles": [
+        "Administrador",
+        "Gerente de Projeto",
+        "Desenvolvedor",
+        "QA",
+        "Documentação"
+    ],
+    "categories": {
+        "📢 GERAL": [
+            "boas-vindas",
+            "anúncios",
+            "regras",
+            "recursos"
+        ],
+        "📆 REUNIÕES E DAILY": [
+            "agendamento-reunioes",
+            "daily-reports",
+            "atas-reunioes-quarta",
+            "atas-reunioes-domingo"
+        ],
+        "🎯 GESTÃO DO PROJETO": [
+            "cronograma",
+            "status-geral",
+            "dúvidas-gerais",
+            "sugestões-melhorias"
+        ],
+        "🧪 TESTES E QUALIDADE": [
+            "testes-unitarios",
+            "testes-integração",
+            "bugs-reports",
+            "validação-qualidade"
+        ],
+        "📚 DOCUMENTAÇÃO": [
+            "documentação-técnica",
+            "guias-processos",
+            "manuais-configuração"
+        ],
+        "🤝 EQUIPE": [
+            "chat-geral-equipe",
+            "off-topic"
+        ]
+    },
+    "voice_channels": [
+        "Reunião Semanal",
+        "Daily Sync",
+        "Discussões Técnicas",
+        "Sala de Pair Programming"
+    ]
+}
