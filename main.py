@@ -36,7 +36,7 @@ class Bot(commands.Bot):
 async def main():
     bot = Bot()
     async with bot:
-        await bot.start('BOT-ANDRE-TOKEN')
+        await bot.start(os.getenv('BOT-ANDRE-TOKEN'))
 
 
 if __name__ == "__main__":
